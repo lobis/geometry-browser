@@ -16,8 +16,8 @@ To start the server, just run the ROOT macro.
 root GeometryBrowser.C
 ```
 
-You can access the server in http://localhost:8090. If you want to use a different port, change the `PORT` variable in the script.
+You can access the server in http://localhost:8090. If you want to use a different port, change the `PORT` variable in the script, or define an environment variable named `GEOMETRYBROWSER_PORT` to be equal to the port you want to use.
 
 The default browser for `THttpServer` will open.
 
-[](https://user-images.githubusercontent.com/35803280/113483324-20743980-94a3-11eb-89af-66d85cb0d798.PNG)
+![Geometry Browser On Startup](https://user-images.githubusercontent.com/35803280/113483324-20743980-94a3-11eb-89af-66d85cb0d798.PNG)

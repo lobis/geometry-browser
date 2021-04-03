@@ -20,8 +20,9 @@ jobs:
       image: rootproject/root:latest
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
       - uses: actions/checkout@v2
 
-      # start the server via root (timeout after 10 seconds)
-      - name: root
-        run: timeout 10 root GeometryBrowser.C
+      # start the server via root, it will close automatically, we just check there are no mistakes in the macro
+      - name: ROOT macro check
+        run: root GeometryBrowser.C

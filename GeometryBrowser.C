@@ -9,7 +9,10 @@
 #include "TNamed.h"
 #include "TUUID.h"
 
-const int PORT = 8090; // the application will be on this port
+const char *PORT_ENV_VAR = "GEOMETRYBROWSER_PORT"; // if this environment variable is specified, the port will be set to that (make sure its a valid port)
+const char *PORT_DEFAULT = "8090";                 // this is the default port
+const char *PORT = (!getenv(PORT_ENV_VAR)) ? PORT_DEFAULT : getenv(PORT_ENV_VAR);
+
 THttpServer *serv;
 
 string gGeometryFilename = "test/BabyIAXO.root"; // default value
@@ -49,9 +52,28 @@ void loadGeometry()
             onFail();
             return;
         }
-        file->GetObject("geo", gGeoManager);
+        // need to extract the TGeoManager object, we iterate over all keys and get the first one it matches
+        TIter next(file->GetListOfKeys());
+        TKey *key;
+        TTree *T;
+        Bool_t foundGeometry = kFALSE;
+        while ((key = (TKey *)next()))
+        {
+            if (strcmp(key->GetClassName(), "TGeoManager"))
+                continue;
+            const auto keyName = key->GetName();
+            cout << "INFO: Reading key '" << keyName << "' (" << key->GetClassName() << ") from file '" << gGeometryFilename << endl;
+            file->GetObject(keyName, gGeoManager);
+            foundGeometry = kTRUE;
+            break;
+        }
         previousUUID = file->GetUUID();
         delete file;
+        if (!foundGeometry)
+        {
+            cout << "ERROR: Did not find a geometry (TGeoManager) in file '" << gGeometryFilename << "'" << endl;
+            onFail();
+        }
     }
     else if (extension == ".gdml")
     {
@@ -113,7 +135,7 @@ void AutoUpdate()
 
 void GeometryBrowser()
 {
-    serv = new THttpServer(Form("http:%d?top=%s", PORT, "Geometry Viewer"));
+    serv = new THttpServer(Form("http:%s?top=%s", PORT, "Geometry Viewer"));
 
     serv->RegisterCommand("/UpdateGeometryFile", "Update(\"%arg1%\")", "button;rootsys/icons/ed_open.png");
 
