@@ -1,4 +1,10 @@
+!.github
 .idea
 .vscode
 *.code-workspace
 build
+node_modules
+*.svg
+*.json
+!package.json
+!package-lock.json
