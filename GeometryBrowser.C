@@ -20,6 +20,8 @@ int interval = 2000;                             // interval in ms to do automat
 auto emptyObject = new TNamed("Undefined", "Undefined");
 TEveGeoShapeExtract *gGSE = nullptr;
 auto previousUUID = TUUID();
+regex extensionRe("(.*)\\.[^.]+$");
+regex pathRe("^[^/]+/");
 
 string getExtension()
 {
@@ -29,6 +31,26 @@ string getExtension()
         return "";
     }
     return gGeometryFilename.substr(gGeometryFilename.length() - 5);
+}
+
+string cleanFilename(const string &filename = gGeometryFilename)
+{
+    string result, replace;
+    // remove all extensions at the end of the file and all the leading directories ((/?)this/is/a/test.ext1.ext2 -> test)
+    replace = filename;
+    while (kTRUE)
+    {
+        result = regex_replace(replace, extensionRe, "$1");
+        result = regex_replace(result, pathRe, "$1");
+        if (replace == result)
+        {
+            // once the replacement does nothing, we return
+            break;
+        }
+        replace = result;
+    }
+
+    return result;
 }
 void loadGeometry()
 {
@@ -42,7 +64,7 @@ void loadGeometry()
     };
 
     // read "gGeometryFilename", it can be either a .gdml file or a .root file containing (atleast) a TGeoManager element
-    string extension = getExtension();
+    const string extension = getExtension();
     if (extension == ".root")
     {
         TFile *file = TFile::Open(gGeometryFilename.c_str());
@@ -94,7 +116,8 @@ void loadGeometry()
     }
     gGSE = (TEveGeoShapeExtract *)gGeoManager;
 
-    gGSE->SetName(gGeometryFilename.c_str());
+    // remove extension and leading directories. This is requiered to use the API (or I didn't find a workaround)
+    gGSE->SetName(cleanFilename().c_str());
     serv->Register("", gGSE);
     serv->Unregister(emptyObject);
 }

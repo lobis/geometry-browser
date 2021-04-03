@@ -29,3 +29,17 @@ To open a new geometry, click on the `UpdateGeometryFile` icon (open folder). A 
 After selecting the file to view its necessary to click the `reload` button for the changes to be visible. If the file was valid (valid GDML or root file with `TGeoManager`) there should be a new entry under the "Objects" directory with the name of your file. If the file was not valid, an empty object will appear.
 
 ![usage](https://user-images.githubusercontent.com/35803280/113485440-bf059800-94ad-11eb-90e9-16b478ba7b94.gif)
+
+# API
+
+As this is built using ROOT's THttpServer, the usual endpoints are exposed. More detailed information is available in the [documentation](https://root.cern.ch/root/htmldoc/guides/HttpServer/HttpServer.html).
+
+To obtain the `json` representation of the geometry (which is itself a ROOT object) you would perform a `get` request to `http://host:port/Objects/name/root.json.gz`.
+
+If we want to do this for a file called `/home/path/geometry.gdml.root`, the logic inside this code will strip the full file path of all leading directories and extensions so the name of the object will be: `geometry`. If we had a local server running on port 8090, we would do:
+
+```
+http://localhost:8090/Objects/geometry/root.json.gz
+```
+
+Beware that we have to add `/root.json.gz` at the end even though the object name didn't have any extension.
