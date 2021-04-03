@@ -4,6 +4,8 @@
 
 A simple `TGeo` ([root](https://root.cern.ch/doc/master/classTGeoManager.html)) / [`GDML`](https://root.cern.ch/doc/v614/group__Geometry__gdml.html) geometry web browser using ROOT's [`THttpServer`](https://root.cern.ch/root/htmldoc/guides/HttpServer/HttpServer.html).
 
+![GeometryBrowserScreenshot](https://user-images.githubusercontent.com/35803280/113485837-e65d6480-94af-11eb-98cd-83ffa62ca45b.PNG)
+
 # Requirements 
 
 Only [ROOT](https://root.cern/), the minimal version should work. It has been tested on ROOT `v6.22.08`. If you don't have ROOT installed, you can also run it in docker using the [official ROOT image](https://hub.docker.com/r/rootproject/root)
