@@ -21,3 +21,9 @@ You can access the server in http://localhost:8090. If you want to use a differe
 The default browser for `THttpServer` will open.
 
 ![Geometry Browser On Startup](https://user-images.githubusercontent.com/35803280/113483324-20743980-94a3-11eb-89af-66d85cb0d798.PNG)
+
+To open a new geometry, click on the `UpdateGeometryFile` icon (open folder). A prompt will open asking you for the file path. You can use relative or absolute path in your file system.
+
+After selecting the file to view its necessary to click the `reload` button for the changes to be visible. If the file was valid (valid GDML or root file with `TGeoManager`) there should be a new entry under the "Objects" directory with the name of your file. If the file was not valid, an empty object will appear.
+
+![usage](https://user-images.githubusercontent.com/35803280/113485440-bf059800-94ad-11eb-90e9-16b478ba7b94.gif)

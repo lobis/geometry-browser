@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  Test:
     runs-on: ubuntu-latest
     container:
       image: rootproject/root:latest
