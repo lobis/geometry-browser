@@ -16,7 +16,7 @@ const char *PORT = (!getenv(PORT_ENV_VAR)) ? PORT_DEFAULT : getenv(PORT_ENV_VAR)
 THttpServer *serv;
 
 string gGeometryFilename = "test/BabyIAXO.root"; // default value
-int interval = 2000;                             // interval in ms to do automatic updates
+int interval = 500;                              // interval in ms to do automatic updates
 auto emptyObject = new TNamed("Undefined", "Undefined");
 TEveGeoShapeExtract *gGSE = nullptr;
 auto previousUUID = TUUID();
@@ -52,6 +52,15 @@ string cleanFilename(const string &filename = gGeometryFilename)
 
     return result;
 }
+
+Bool_t useSingleGeometryName = kFALSE; // if this is set to true, all geometry objects will be named "Geometry"
+void ToggleSingleGeometryName(Bool_t value)
+{
+    useSingleGeometryName = value;
+    const char *objectName = (useSingleGeometryName) ? "Geometry" : cleanFilename().c_str();
+    gGSE->SetName(objectName);
+}
+
 void loadGeometry()
 {
     auto onFail = []() {
@@ -117,7 +126,7 @@ void loadGeometry()
     gGSE = (TEveGeoShapeExtract *)gGeoManager;
 
     // remove extension and leading directories. This is requiered to use the API (or I didn't find a workaround)
-    gGSE->SetName(cleanFilename().c_str());
+    ToggleSingleGeometryName(useSingleGeometryName);
     serv->Register("", gGSE);
     serv->Unregister(emptyObject);
 }
@@ -161,6 +170,11 @@ void GeometryBrowser()
     serv = new THttpServer(Form("http:%s?top=%s", PORT, "Geometry Viewer"));
 
     serv->RegisterCommand("/UpdateGeometryFile", "Update(\"%arg1%\")", "button;rootsys/icons/ed_open.png");
+
+    serv->RegisterCommand("/EnableSingleGeometryName", "ToggleSingleGeometryName(kTRUE)", "rootsys/icons/ed_execute.png");
+    serv->RegisterCommand("/DisableSingleGeometryName", "ToggleSingleGeometryName(kFALSE)", "rootsys/icons/ed_delete.png");
+    //serv->Hide("/EnableSingleGeometryName");
+    //serv->Hide("/DisableSingleGeometryName");
 
     TTimer *timer = new TTimer("AutoUpdate()", interval);
     timer->TurnOn();
