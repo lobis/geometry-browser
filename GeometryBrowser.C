@@ -12,8 +12,8 @@
 const int PORT = 8090; // the application will be on this port
 THttpServer *serv;
 
-string gGeometryFilename = "resources/BabyIAXO.root"; // default value
-int interval = 2000;                                       // interval in ms to do automatic updates
+string gGeometryFilename = "test/BabyIAXO.root"; // default value
+int interval = 2000;                             // interval in ms to do automatic updates
 auto emptyObject = new TNamed("Undefined", "Undefined");
 TEveGeoShapeExtract *gGSE = nullptr;
 auto previousUUID = TUUID();
