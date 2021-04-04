@@ -29,6 +29,8 @@ jobs:
 
   Node:
     runs-on: ubuntu-latest
+    container:
+      image: node:latest
     defaults:
       run:
         working-directory: ./node
@@ -37,14 +39,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install additional dependencies
-        run: sudo apt-get install xserver-xorg-dev libxi-dev libxext-dev -y
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: "15"
-          check-latest: true
+      - name: Check Working Directory
+        run: pwd && ls -lht
 
       - name: Install node_modules
         run: npm install
