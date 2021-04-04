@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install additional dependencies
-        run: apt update && apt install xserver-xorg-dev libxi-dev libxext-dev -y
+        run: sudo apt-get install xserver-xorg-dev libxi-dev libxext-dev -y
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
