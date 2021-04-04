@@ -8,6 +8,7 @@
 #include "TTimer.h"
 #include "TNamed.h"
 #include "TUUID.h"
+#include "TTree.h"
 
 const char *PORT_ENV_VAR = "GEOMETRYBROWSER_PORT"; // if this environment variable is specified, the port will be set to that (make sure its a valid port)
 const char *PORT_DEFAULT = "8090";                 // this is the default port
@@ -18,7 +19,8 @@ THttpServer *serv;
 string gGeometryFilename = "test/BabyIAXO.root"; // default value
 int interval = 500;                              // interval in ms to do automatic updates
 auto emptyObject = new TNamed("Undefined", "Undefined");
-TEveGeoShapeExtract *gGSE = nullptr;
+TEveGeoShapeExtract *gGSE;
+TFile *file;
 auto previousUUID = TUUID();
 regex extensionRe("(.*)\\.[^.]+$");
 regex pathRe("^[^/]+/");
@@ -53,7 +55,7 @@ string cleanFilename(const string &filename = gGeometryFilename)
     return result;
 }
 
-Bool_t useSingleGeometryName = kFALSE; // if this is set to true, all geometry objects will be named "Geometry"
+Bool_t useSingleGeometryName = kTRUE; // if this is set to true, all geometry objects will be named "Geometry"
 void ToggleSingleGeometryName(Bool_t value)
 {
     useSingleGeometryName = value;
@@ -72,11 +74,15 @@ void loadGeometry()
         }
     };
 
+    if (file)
+    {
+        delete file;
+    }
     // read "gGeometryFilename", it can be either a .gdml file or a .root file containing (atleast) a TGeoManager element
     const string extension = getExtension();
     if (extension == ".root")
     {
-        TFile *file = TFile::Open(gGeometryFilename.c_str());
+        file = TFile::Open(gGeometryFilename.c_str());
         if (!file)
         {
             cout << "ERROR: no file named: '" << gGeometryFilename << "'" << endl;
@@ -90,16 +96,24 @@ void loadGeometry()
         Bool_t foundGeometry = kFALSE;
         while ((key = (TKey *)next()))
         {
-            if (strcmp(key->GetClassName(), "TGeoManager"))
-                continue;
-            const auto keyName = key->GetName();
-            cout << "INFO: Reading key '" << keyName << "' (" << key->GetClassName() << ") from file '" << gGeometryFilename << endl;
-            file->GetObject(keyName, gGeoManager);
-            foundGeometry = kTRUE;
-            break;
+            if (!strcmp(key->GetClassName(), "TGeoManager") && !foundGeometry)
+            {
+                const auto keyName = key->GetName();
+                cout << "INFO: Reading key '" << keyName << "' (" << key->GetClassName() << ") from file '" << gGeometryFilename << "'" << endl;
+                file->GetObject(keyName, gGeoManager);
+                foundGeometry = kTRUE;
+            }
+            if (!strcmp(key->GetClassName(), "TTree"))
+            {
+                const auto keyName = key->GetName();
+                cout << "INFO: Reading key '" << keyName << "' (" << key->GetClassName() << ") from file '" << gGeometryFilename << "'" << endl;
+                TTree *tree;
+                file->GetObject(keyName, tree);
+                tree->SetName(keyName);
+                serv->Register("", tree);
+            }
         }
         previousUUID = file->GetUUID();
-        delete file;
         if (!foundGeometry)
         {
             cout << "ERROR: Did not find a geometry (TGeoManager) in file '" << gGeometryFilename << "'" << endl;
