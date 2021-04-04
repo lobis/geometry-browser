@@ -1,7 +1,7 @@
 let jsroot = require("jsroot");
 let geom = jsroot.require('geom')
 let fs = require("fs");
-var zlib = require('zlibjs');
+var zlib = require('zlib');
 
 console.log('JSROOT version', jsroot.version);
 

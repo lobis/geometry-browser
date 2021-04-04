@@ -55,4 +55,6 @@ jobs:
       #- name: JSROOT save SVG image of geometry
       #  run: node saveSVG.js
       - name: JSROOT read geometry and save to three.js json format
-        run: node geometryToThreeJson.js
+        run: |
+          node geometryToThreeJson.js
+          ls -lht | grep .json
