@@ -29,13 +29,16 @@ jobs:
 
   Node:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./node
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Go to Working working-directory
-        run: cd ./node && pwd
+      - name: Check Working Directory
+        run: pwd
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
@@ -44,7 +47,7 @@ jobs:
           check-latest: true
 
       - name: Install node_modules
-        run: npm install
+        run: pwd && npm install
 
       - name: JSROOT read json.gz geometry
         run: node readJson.js
