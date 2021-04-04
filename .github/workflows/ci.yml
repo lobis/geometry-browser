@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Test:
+  Server:
     runs-on: ubuntu-latest
     container:
       image: rootproject/root:latest
@@ -26,3 +26,15 @@ jobs:
       # start the server via root, it will close automatically, we just check there are no mistakes in the macro
       - name: ROOT macro check
         run: root GeometryBrowser.C
+
+  Node:
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./node
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "15"
+          check-latest: true
+      - run: npm install

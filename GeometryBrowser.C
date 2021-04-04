@@ -16,8 +16,8 @@ const char *PORT = (!getenv(PORT_ENV_VAR)) ? PORT_DEFAULT : getenv(PORT_ENV_VAR)
 
 THttpServer *serv;
 
-string gGeometryFilename = "test/BabyIAXO.root"; // default value
-int interval = 500;                              // interval in ms to do automatic updates
+string gGeometryFilename = "test/geometry/BabyIAXO.root"; // default value
+int interval = 500;                                       // interval in ms to do automatic updates
 auto emptyObject = new TNamed("Undefined", "Undefined");
 TEveGeoShapeExtract *gGSE;
 TFile *file;
@@ -60,10 +60,13 @@ void ToggleSingleGeometryName(Bool_t value)
 {
     useSingleGeometryName = value;
     const char *objectName = (useSingleGeometryName) ? "Geometry" : cleanFilename().c_str();
-    gGSE->SetName(objectName);
+    if (gGSE)
+    {
+        gGSE->SetName(objectName);
+    }
 }
 
-void loadGeometry()
+void LoadGeometry()
 {
     auto onFail = []() {
         if (gGSE)
@@ -73,6 +76,10 @@ void loadGeometry()
             gGSE = nullptr;
         }
     };
+
+    cout << "DEBUG: Attempting to load file '" << gGeometryFilename << "'" << endl;
+
+    Bool_t loadedTree = kFALSE;
 
     if (file)
     {
@@ -111,6 +118,7 @@ void loadGeometry()
                 file->GetObject(keyName, tree);
                 tree->SetName(keyName);
                 serv->Register("", tree);
+                loadedTree = kTRUE;
             }
         }
         previousUUID = file->GetUUID();
@@ -143,6 +151,11 @@ void loadGeometry()
     ToggleSingleGeometryName(useSingleGeometryName);
     serv->Register("", gGSE);
     serv->Unregister(emptyObject);
+
+    if (!loadedTree && file)
+    {
+        delete file;
+    }
 }
 
 void Update(string filename = gGeometryFilename)
@@ -151,7 +164,7 @@ void Update(string filename = gGeometryFilename)
     // updating global filename
     gGeometryFilename = filename;
 
-    loadGeometry();
+    LoadGeometry();
 }
 
 void AutoUpdate()
@@ -176,7 +189,7 @@ void AutoUpdate()
 
     cout << "INFO: Automatically updating geometry since file probably changed" << endl;
     delete file;
-    loadGeometry();
+    LoadGeometry();
 }
 
 void GeometryBrowser()
@@ -184,7 +197,7 @@ void GeometryBrowser()
     serv = new THttpServer(Form("http:%s?top=%s", PORT, "Geometry Viewer"));
 
     serv->RegisterCommand("/UpdateGeometryFile", "Update(\"%arg1%\")", "button;rootsys/icons/ed_open.png");
-
+    serv->RegisterCommand("/Refresh", "LoadGeometry()", "button;rootsys/icons/ed_open.png");
     serv->RegisterCommand("/EnableSingleGeometryName", "ToggleSingleGeometryName(kTRUE)", "rootsys/icons/ed_execute.png");
     serv->RegisterCommand("/DisableSingleGeometryName", "ToggleSingleGeometryName(kFALSE)", "rootsys/icons/ed_delete.png");
     //serv->Hide("/EnableSingleGeometryName");

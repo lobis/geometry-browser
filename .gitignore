@@ -6,5 +6,9 @@ build
 node_modules
 *.svg
 *.json
-!package.json
-!package-lock.json
+!node/package.json
+!node/package-lock.json
+*.json.gz
+!test/*/*.json.gz
+*.root
+!test/*/*.root
