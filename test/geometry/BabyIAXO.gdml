@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
 <gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
     <define/>
-   <materials>
+    <materials>
         <isotope Z="1.0" N="1" name="H1">
             <atom value="1.007825" unit="g/mole" type="A"/>
         </isotope>
@@ -3158,7 +3158,7 @@
             <fraction n="0.012827" ref="Ar"/>
         </material>
     </materials>
-        <solids>
+    <solids>
         <box name="scintillatorSolid-800.0mm" x="200.0" y="50.0" z="800.0"/>
         <box name="captureLayerSolid-800.0mm" x="200.0" y="1.0" z="800.0"/>
         <box name="scintillatorWrappingBaseSolid-800.0mm" x="202.0" y="52.0" z="802.0"/>
@@ -3525,6 +3525,9 @@
             <solidref ref="gasSolid"/>
         </volume>
         <assembly name="assembly-5">
+            <physvol name="gas">
+                <volumeref ref="gasVolume"/>
+            </physvol>
             <physvol name="chamberBackplate">
                 <volumeref ref="chamberBackplateVolume"/>
                 <position name="chamberBackplate.position" z="-23.0"/>
@@ -5067,9 +5070,6 @@
             </physvol>
         </assembly>
         <volume name="world">
-            <physvol name="gas">
-                <volumeref ref="gasVolume"/>
-            </physvol>
             <physvol name="Chamber">
                 <volumeref ref="assembly-5"/>
             </physvol>
@@ -5174,7 +5174,6 @@
             <solidref ref="worldBox"/>
         </volume>
     </structure>
-
     <setup name="Default" version="1.0">
         <world ref="world"/>
     </setup>
