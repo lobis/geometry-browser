@@ -1,8 +1,10 @@
 {
   "dependencies": {
-    "jsroot": "^6.0.1"
-  },
-  "devDependencies": {
+    "canvas": "^2.7.0",
+    "cross-blob": "^2.0.0",
+    "jsroot": "^6.0.1",
+    "three-gltf-exporter": "^0.0.1",
+    "vblob": "^1.0.2",
     "zlib": "^1.0.5"
   }
 }

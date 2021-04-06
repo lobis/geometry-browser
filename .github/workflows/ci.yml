@@ -54,7 +54,7 @@ jobs:
       # temporary removed due to error with gl in ubuntu (works on windows)
       #- name: JSROOT save SVG image of geometry
       #  run: node saveSVG.js
-      - name: JSROOT read geometry and save to three.js json format
+      - name: JSROOT read geometry and export it
         run: |
-          node geometryToThreeJson.js
-          ls -lht | grep .json
+          node exportGeometry.js
+          ls -lht | grep geometry.three
