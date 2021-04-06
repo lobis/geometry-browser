@@ -46,7 +46,7 @@ jobs:
           node-version: "15"
           check-latest: true
 
-      - name: Install node_modules
+      - name: Install Node Modules
         run: npm install
 
       - name: JSROOT read json.gz geometry
@@ -64,4 +64,5 @@ jobs:
         with:
           name: geometry
           path: |
-            ./geometry.three.*
+            ./
+            ./node
