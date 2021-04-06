@@ -41,7 +41,6 @@ function exportGeometry(obj) {
         data["info"].push(top_volumes_names[i])
     }
 
-    console.log(data);
     const outputFileName = "geometry.three.json";
 
     fs.writeFileSync(outputFileName, JSON.stringify(data));
