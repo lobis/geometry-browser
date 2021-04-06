@@ -64,5 +64,4 @@ jobs:
         with:
           name: geometry
           path: |
-            ./
-            ./node
+            ./node/geometry.three*
